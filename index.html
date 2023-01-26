@@ -15,18 +15,23 @@
       href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
     <script
       src="https://kit.fontawesome.com/8891378205.js"
       crossorigin="anonymous"
     ></script>
     <script src="app.js" defer></script>
     <title>Tic Tac Toe</title>
-  </head>
+  </head>dw
   <body>
     <div class="container">
       <div class="header">
         <div class="title">Tic Tac Toe</div>
       </div>
+
       <div class="main">
         <div class="game" id="gameContainer">
           <div class="square" id="sq1" data-index="0-0"></div>
@@ -39,7 +44,19 @@
           <div class="square" id="sq8" data-index="2-1"></div>
           <div class="square" id="sq9" data-index="2-2"></div>
         </div>
+        <div class="status" id="status-text"></div>
+        <div class="info">
+          <div class="scores">
+            <div class="player1" id="player1score">1</div>
+            <div class="player2" id="player2score">2</div>
+          </div>
+          <div class="players">
+            <div class="player" id="player1name">player 1</div>
+            <div class="player" id="player2name">player 2</div>
+          </div>
+        </div>
       </div>
+
       <div class="footer">
         <footer>
           <p>
