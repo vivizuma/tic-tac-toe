@@ -18,6 +18,7 @@ const gameBoard = (() => {
     ["", "", ""],
     ["", "", ""],
   ];
+  const getBoard = () => grid;
 
   const clearBoardv2 = () => {
     for (i = 0; i < 3; i++) {
@@ -27,8 +28,10 @@ const gameBoard = (() => {
     }
     console.log("board cleared");
   };
-
-  return { grid, clearBoardv2 };
+  const markSquare = (column, row, player) => {
+    
+  }
+  return { grid, clearBoardv2, getBoard };
   // () immediately invokes the function and returns grid and hello
 })();
 const gameController = (()=> {
@@ -59,10 +62,26 @@ const gameController = (()=> {
 })
 
 const screenController = (() => {
+
   const updateGridView = () => {
+
+    // 1. clear the DOM of the current board display by setting .board div to empty string ""
+    // 2. Get the most up to date board from gameController
+    // 3. Get the most up to date active player from gameController
+    // 4. Render the player.marker in square div;
+    // 5. render each square on the DOM
+          // give each cell a data attribute 
+          // TODO: make cells buttons
     let grid = getElementById('gameContainer');
     grid.forEach
   }
 })
 gameController().checkWin()
+
+const cells = document.querySelectorAll('.square');
+cells.forEach((cell)=> {
+  console.log("i am a cell")
+  console.log(cell.getAttribute("data-index"))
+  
+})
 console.log(gameBoard.grid)
