@@ -3,8 +3,8 @@ const playerFactory = (name, marker, number, score) => {
   return { name, marker, number, score };
 };
 
-const player1 = playerFactory("Player 1", "X", 1, 12);
-const player2 = playerFactory("Player 2", "O", 1, 3);
+const player1 = playerFactory("Player 1", "X", 1, 0);
+const player2 = playerFactory("Player 2", "O", 1, 0);
 
 //reset player scores
 
@@ -38,12 +38,23 @@ const gameController = (() => {
   let turns = 0;
   let rounds = 0;
   let gameOver = false;
+  let isWin = false;
   let playerList = [player1, player2];
   let activePlayer = playerList[0];
   let isDraw = false;
   let winner;
   let msg;
-
+  const resetVariables = () => {
+    turns = 0;
+    rounds = 0;
+    gameOver = false;
+    isWin = false;
+    playerList = [player1, player2];
+    activePlayer = playerList[0];
+    isDraw = false;
+    winner;
+    msg;
+  };
   const endMsg = (player) => {
     if (isDraw) {
       return (msg = "It's a draw");
@@ -61,30 +72,30 @@ const gameController = (() => {
     return activePlayer;
   };
 
-  const playRound = () => {
-    // put player marker on relevant grid
-    //check for win
-    gameController.checkWin();
-    // if no win
-    //increase rounds +1
-    gameController.rounds++;
-    //swap player turn
-    gameController.switchPlayerTurn();
-    //update screen display
-
-    //if win. screencontroller.textstatus -> "currentPlayer wins!"
-  };
   const getTurns = () => {
     return gameController.turns;
   };
   const gameOverActions = (activePlayer) => {
+    //check if win or draw
+    // if draw change msg to its a draw'
+    //if win increase score +1 and change msg to x wins
     winner = activePlayer;
+    if (gameController.isDraw === true) {
+      msg = "It's a draw!";
+      console.log(msg);
+    }
+    if (gameController.gameOver === true && gameController.isDraw === false) {
+      msg = `${gameController.activePlayer.name} wins!`;
+      console.log(msg);
+    }
+    screenController.gameOverModal();
     console.log(winner);
   };
   const gameWon = () => {
     let game = gameController;
     game.gameOver = true;
-    game.winner = getActivePlayer();
+    game.isWin = true;
+    game.winner = getActivePlayer().name;
     game.isDraw = false;
 
     //increase score of winning player by 1
@@ -107,10 +118,11 @@ const gameController = (() => {
         console.log(
           "horiz WIN ------------------------------------------------------------------"
         );
-        gameController.gameOver = true;
+
         gameController.gameWon();
       }
     }
+    //vertical wins
     for (j = 0; j < 3; j++) {
       if (
         grid[0][j] === grid[1][j] &&
@@ -121,6 +133,7 @@ const gameController = (() => {
         return (gameController.gameOver = true);
       }
     }
+    //diag wins
     if (
       grid[0][0] === grid[1][1] &&
       grid[1][1] === grid[2][2] &&
@@ -144,61 +157,53 @@ const gameController = (() => {
     // }
   };
   const checkForDraw = () => {
-    if (gameController.turns > 8 && gameController.gameOver === false) {
+    if (gameController.turns > 8 && gameController.isWin === false) {
       console.log("draW");
       isDraw = true;
+      msg = "It's a draw";
       return (gameController.gameOver = true);
+    }
+  };
+  const isGameOver = () => {
+    if (gameOver === true && isDraw === true) {
+      console.log();
     }
   };
   const clickGrid = () => {
     const squares = document.querySelectorAll(".square");
-    squares.forEach((square) => {
-      square.addEventListener("click", function () {
-        let index = square.getAttribute("data-index");
-        if (square.innerHTML != "" || gameController.gameOver === true) {
-          console.log("square taken lmao");
-        }
-        if (gameController.gameOver === true) {
-          console.log("game over");
-        } else {
-          console.log(index);
-          console.log(activePlayer.marker);
-          //get row and column from data index
-          let row = parseInt(index[0]);
-          let column = parseInt(index[2]);
-          console.log(`"row: ${row} + col: ${column}"`);
-          gameBoard.grid[row][column] = activePlayer.marker;
-          console.log(
-            `"activePlayer ${
-              activePlayer.name
-            }, gameController.activePlayer = ${
-              gameController.activePlayer.name
-            }, gameController.getActivePlayer() = ${gameController.getActivePlayer()}"`
-          );
+    if (gameController.gameOver != true) {
+      squares.forEach((square) => {
+        square.addEventListener("click", function () {
+          let index = square.getAttribute("data-index");
+          if (square.innerHTML != "") {
+            console.log("square taken lmao");
+          } else {
+            //get row and column from data index
+            let row = parseInt(index[0]);
+            let column = parseInt(index[2]);
 
-          console.log(activePlayer);
-          //gameBoard.markSquare(column, row, activePlayer);
-          console.log(gameBoard.grid);
-          // gameController.checkWin();
-          if (gameController.gameOver != true) {
-            gameController.turnCounter();
-            gameController.checkWin();
-            gameController.checkForDraw();
-            gameController.switchPlayerTurn();
-            screenController.updateScreen();
-            console.log(gameController.turns);
-            console.log(gameController.gameOver);
+            gameBoard.grid[row][column] = activePlayer.marker;
+
+            //gameBoard.markSquare(column, row, activePlayer);
+            // gameController.checkWin();
+            if (gameController.gameOver != true) {
+              gameController.turnCounter();
+              gameController.checkWin();
+              gameController.checkForDraw();
+              gameController.switchPlayerTurn();
+              screenController.updateScreen();
+              if (gameController.gameOver === true) {
+                gameController.gameOverActions();
+              }
+            }
           }
-          if (gameOver === true) {
-            console.log("ooooooooooooooooooooooooooo");
-            gameController.gameOverActions(activePlayer);
-          }
-        }
+        });
       });
-    });
+    }
   };
 
   return {
+    resetVariables,
     gameWon,
     gameOverActions,
     checkForDraw,
@@ -211,7 +216,6 @@ const gameController = (() => {
     gameOver,
     switchPlayerTurn,
     getActivePlayer,
-    playRound,
     clickGrid,
   };
 })();
@@ -223,20 +227,17 @@ const screenController = (() => {
   let currentBoard;
   let activePlayer = game.getActivePlayer();
   let grid = gameBoard.grid;
-  console.log(`"this is grid: ${grid}"`);
-  console.log("active player is");
-  console.log(activePlayer.name);
+
   const displayPlayerTurn = () => {
     const status = document.getElementById("status-text");
     status.innerText = `${game.getActivePlayer().name}'s turn`;
   };
   const updateScores = () => {
-    const player1score = document.getElementById(
-      `'${gameController.playerList[0].name}score'`
-    );
+    const player1score = document.getElementById("player1score");
     const player2score = document.getElementById("player2score");
 
     player1score.innerHTML = game.playerList[0].score;
+
     player2score.innerHTML = gameController.playerList[1].score;
   };
   const updateScreen = () => {
@@ -258,7 +259,17 @@ const screenController = (() => {
       }
     }
   };
+
+  const gameOverModal = () => {
+    const modal = document.getElementById("gameOverModal");
+    const btn = document.getElementById("gameOverModal");
+    const endMsg = document.getElementById("endMsg");
+
+    endMsg.innerHtml = "eyyyyyyyyyyyyyyyyyy";
+    modal.style.display = "block";
+  };
   return {
+    gameOverModal,
     displayPlayerTurn,
     updateScreen,
     updateScores,
@@ -275,6 +286,6 @@ initGame();
 
 function newRound() {
   initGame();
-  gameController.turns = 0;
+  gameController.resetVariables();
   gameBoard.clearBoardv2();
 }
