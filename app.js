@@ -44,17 +44,20 @@ const gameController = (() => {
   let isDraw = false;
   let winner;
   let msg;
+  let previousPlayer = playerList[0];
   const resetVariables = () => {
-    turns = 0;
-    rounds = 0;
-    gameOver = false;
-    isWin = false;
-    playerList = [player1, player2];
-    activePlayer = playerList[0];
-    isDraw = false;
-    winner;
-    msg;
+    let gameController = g;
+    g.turns = 0;
+    g.rounds = 0;
+    g.gameOver = false;
+    g.isWin = false;
+    g.playerList = [player1, player2];
+    g.activePlayer = playerList[0];
+    g.isDraw = false;
+    g.winner;
+    g.msg;
   };
+
   const endMsg = (player) => {
     if (isDraw) {
       return (msg = "It's a draw");
@@ -66,44 +69,67 @@ const gameController = (() => {
       activePlayer === playerList[0] ? playerList[1] : playerList[0];
   };
   const turnCounter = () => {
+    console.log(gameController.turns);
     gameController.turns++;
+    console.log(gameController.turns);
   };
   const getActivePlayer = () => {
     return activePlayer;
   };
-
+  const PreviousPlayer = () => {
+    previousPlayer =
+      activePlayer === playerList[0]
+        ? (previousPlayer = playerList[1])
+        : (previousPlayer = playerList[0]);
+  };
+  const getPreviousPlayer = () => {
+    return previousPlayer;
+  };
   const getTurns = () => {
     return gameController.turns;
   };
-  const gameOverActions = (activePlayer) => {
+  const gameOverActions = () => {
     //check if win or draw
     // if draw change msg to its a draw'
     //if win increase score +1 and change msg to x wins
-    winner = activePlayer;
-    if (gameController.isDraw === true) {
-      msg = "It's a draw!";
-      console.log(msg);
+
+    if (gameController.isDraw === true && gameController.gameOver === true) {
+      gameController.msg = "It's a draw!";
+      console.log(gameController.msg);
+      screenController.gameOverModal();
     }
     if (gameController.gameOver === true && gameController.isDraw === false) {
-      msg = `${gameController.activePlayer.name} wins!`;
+      msg = `${gameController.getActivePlayer().name} wins!`;
+      gameController.getActivePlayer().score++;
+      screenController.updateScores();
       console.log(msg);
+      screenController.gameOverModal();
     }
-    screenController.gameOverModal();
-    console.log(winner);
   };
-  const gameWon = () => {
-    let game = gameController;
-    game.gameOver = true;
-    game.isWin = true;
-    game.winner = getActivePlayer().name;
-    game.isDraw = false;
+  const checkGameOver = () => {
+    if (gameController.gameOver === true) {
+      gameController.winner = gameController.getPreviousPlayer();
+      if (gameController.isWinner === true && gameController.isDraw === false) {
+        gameController.gameOverActions();
+      }
+      if (gameController.isDraw === true && gameController.isWin === false) {
+        gameController.gameOverActions();
+      }
+    }
+  };
+  // const gameWon = () => {
+  //   let game = gameController;
+  //   game.gameOver = true;
+  //   game.isWin = true;
+  //   game.winner = getPreviousPlayer().name;
+  //   game.isDraw = false;
 
-    //increase score of winning player by 1
-    game.winner.score++;
-    console.log(game.winner.name);
-    console.log(game.gameOver);
-    console.log(game.isDraw);
-  };
+  //   //increase score of winning player by 1
+  //   gameController.gameOverActions();
+  //   console.log(game.winner.name);
+  //   console.log(game.gameOver);
+  //   console.log(game.isDraw);
+  // };
   const checkWin = () => {
     let grid = gameBoard.grid;
 
@@ -115,11 +141,8 @@ const gameController = (() => {
         grid[i][1] === grid[i][2] &&
         grid[i][0] != ""
       ) {
-        console.log(
-          "horiz WIN ------------------------------------------------------------------"
-        );
-
-        gameController.gameWon();
+        gameController.isWinner = true;
+        gameController.gameOver = true;
       }
     }
     //vertical wins
@@ -129,8 +152,8 @@ const gameController = (() => {
         grid[1][j] === grid[2][j] &&
         grid[0][j] != ""
       ) {
-        console.log("vertiwiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiin");
-        return (gameController.gameOver = true);
+        gameController.isWinner = true;
+        gameController.gameOver = true;
       }
     }
     //diag wins
@@ -139,16 +162,16 @@ const gameController = (() => {
       grid[1][1] === grid[2][2] &&
       grid[0][0] != ""
     ) {
-      console.log("=-s--s-s-s-s-s- diag win");
-      return (gameController.gameOver = true);
+      gameController.isWinner = true;
+      gameController.gameOver = true;
     }
     if (
       grid[0][2] === grid[1][1] &&
-      grid[1][1] === grid[0][0] &&
-      grid[0][0] != ""
+      grid[1][1] === grid[2][0] &&
+      grid[0][2] != ""
     ) {
-      console.log("other diag win");
-      return (gameController.gameOver = true);
+      gameController.isWinner = true;
+      gameController.gameOver = true;
     }
 
     // if (gameController.gameOver === false && gameController.turns === 9) {
@@ -157,19 +180,21 @@ const gameController = (() => {
     // }
   };
   const checkForDraw = () => {
-    if (gameController.turns > 8 && gameController.isWin === false) {
-      console.log("draW");
-      isDraw = true;
-      msg = "It's a draw";
-      return (gameController.gameOver = true);
+    console.log(gameController.turns);
+    console.log("before check");
+    if (gameController.getTurns() > 8) {
+      console.log(gameController.turns);
+      console.log(gameController.getTurns());
+      console.log("greater than x");
+
+      gameController.isDraw = true;
+      gameController.gameOver = true;
     }
   };
-  const isGameOver = () => {
-    if (gameOver === true && isDraw === true) {
-      console.log();
-    }
-  };
+
   const clickGrid = () => {
+    let game = gameController;
+    let screen = screenController;
     const squares = document.querySelectorAll(".square");
     if (gameController.gameOver != true) {
       squares.forEach((square) => {
@@ -181,21 +206,31 @@ const gameController = (() => {
             //get row and column from data index
             let row = parseInt(index[0]);
             let column = parseInt(index[2]);
-
             gameBoard.grid[row][column] = activePlayer.marker;
-
             //gameBoard.markSquare(column, row, activePlayer);
             // gameController.checkWin();
-            if (gameController.gameOver != true) {
-              gameController.turnCounter();
-              gameController.checkWin();
-              gameController.checkForDraw();
-              gameController.switchPlayerTurn();
-              screenController.updateScreen();
-              if (gameController.gameOver === true) {
-                gameController.gameOverActions();
-              }
-            }
+
+            game.turnCounter();
+            game.checkWin();
+            game.checkForDraw();
+            game.checkGameOver();
+            game.switchPlayerTurn();
+
+            screen.updateScreen();
+            console.log(game.getTurns());
+            console.log(game.isDraw);
+            console.log(game.gameOver);
+            // gameController.turnCounter();
+            // screenController.updateScreen();
+            // gameController.checkWin();
+            // gameController.checkForDraw();
+
+            // screenController.updateScreen();
+            // gameController.switchPlayerTurn();
+            // gameController.PreviousPlayer();
+            // gameController.checkGameOver();
+            // screenController.displayPlayerTurn;
+            // screenController.updateScores;
           }
         });
       });
@@ -203,14 +238,20 @@ const gameController = (() => {
   };
 
   return {
+    PreviousPlayer,
     resetVariables,
-    gameWon,
+
     gameOverActions,
     checkForDraw,
+    checkGameOver,
     turnCounter,
     getTurns,
+    getPreviousPlayer,
     turns,
+    isWin,
+    isDraw,
     activePlayer,
+    previousPlayer,
     checkWin,
     playerList,
     gameOver,
@@ -265,7 +306,7 @@ const screenController = (() => {
     const btn = document.getElementById("gameOverModal");
     const endMsg = document.getElementById("endMsg");
 
-    endMsg.innerHtml = "eyyyyyyyyyyyyyyyyyy";
+    endMsg.innerHtml = gameController.msg;
     modal.style.display = "block";
   };
   return {
