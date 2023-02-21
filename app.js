@@ -46,7 +46,7 @@ const gameController = (() => {
   let msg;
   let previousPlayer = playerList[0];
   const resetVariables = () => {
-    let gameController = g;
+    let g = gameController;
     g.turns = 0;
     g.rounds = 0;
     g.gameOver = false;
@@ -57,7 +57,21 @@ const gameController = (() => {
     g.winner;
     g.msg;
   };
+  const newRound = () => {
+    console.log(gameBoard.grid);
+    gameController.resetVariables();
+    gameBoard.clearBoardv2();
+    screenController.updateScreen();
+    console.log(gameBoard.grid);
+  };
 
+  const nextGameBtn = () => {
+    let g = gameController;
+    const btn = document.getElementById("next-btn");
+    btn.addEventListener("click", () => {
+      g.newRound();
+    });
+  };
   const endMsg = (player) => {
     if (isDraw) {
       return (msg = "It's a draw");
@@ -97,6 +111,7 @@ const gameController = (() => {
       msg = "It's a draw!";
       console.log(gameController.msg);
       screenController.gameOverText(msg);
+      screenController.renderNextGameBtn();
     }
     if (gameController.gameOver === true && gameController.isDraw === false) {
       msg = `${gameController.getActivePlayer().name} wins!`;
@@ -104,6 +119,7 @@ const gameController = (() => {
       screenController.updateScores();
       console.log(msg);
       screenController.gameOverText(msg);
+      screenController.renderNextGameBtn();
     }
   };
   const checkGameOver = () => {
@@ -238,6 +254,8 @@ const gameController = (() => {
   };
 
   return {
+    newRound,
+    nextGameBtn,
     PreviousPlayer,
     resetVariables,
 
@@ -315,9 +333,20 @@ const screenController = (() => {
     statusText.innerHTML = "";
     statusText.innerHTML = msg;
   };
+
+  const renderNextGameBtn = () => {
+    const g = gameController;
+    const btn = document.getElementById("next-btn");
+
+    btn.style.display = "block";
+    btn.addEventListener("click", () => {g.newRound();
+    btn.style.display = "none"});
+    
+  };
   return {
     gameOverText,
     gameOverModal,
+    renderNextGameBtn,
     displayPlayerTurn,
     updateScreen,
     updateScores,
@@ -331,9 +360,3 @@ function initGame() {
 }
 //todo later
 initGame();
-
-function newRound() {
-  initGame();
-  gameController.resetVariables();
-  gameBoard.clearBoardv2();
-}
