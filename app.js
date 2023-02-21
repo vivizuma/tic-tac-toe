@@ -94,16 +94,16 @@ const gameController = (() => {
     //if win increase score +1 and change msg to x wins
 
     if (gameController.isDraw === true && gameController.gameOver === true) {
-      gameController.msg = "It's a draw!";
+      msg = "It's a draw!";
       console.log(gameController.msg);
-      screenController.gameOverModal();
+      screenController.gameOverText(msg);
     }
     if (gameController.gameOver === true && gameController.isDraw === false) {
       msg = `${gameController.getActivePlayer().name} wins!`;
       gameController.getActivePlayer().score++;
       screenController.updateScores();
       console.log(msg);
-      screenController.gameOverModal();
+      screenController.gameOverText(msg);
     }
   };
   const checkGameOver = () => {
@@ -200,7 +200,7 @@ const gameController = (() => {
       squares.forEach((square) => {
         square.addEventListener("click", function () {
           let index = square.getAttribute("data-index");
-          if (square.innerHTML != "") {
+          if (square.innerHTML != "" || game.gameOver === true) {
             console.log("square taken lmao");
           } else {
             //get row and column from data index
@@ -213,10 +213,10 @@ const gameController = (() => {
             game.turnCounter();
             game.checkWin();
             game.checkForDraw();
+            screen.updateScreen();
             game.checkGameOver();
             game.switchPlayerTurn();
 
-            screen.updateScreen();
             console.log(game.getTurns());
             console.log(game.isDraw);
             console.log(game.gameOver);
@@ -309,7 +309,14 @@ const screenController = (() => {
     endMsg.innerHtml = gameController.msg;
     modal.style.display = "block";
   };
+
+  const gameOverText = (msg) => {
+    const statusText = document.getElementById("status-text");
+    statusText.innerHTML = "";
+    statusText.innerHTML = msg;
+  };
   return {
+    gameOverText,
     gameOverModal,
     displayPlayerTurn,
     updateScreen,
