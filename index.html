@@ -15,6 +15,10 @@
       href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
     <script
       src="https://kit.fontawesome.com/8891378205.js"
       crossorigin="anonymous"
@@ -27,19 +31,40 @@
       <div class="header">
         <div class="title">Tic Tac Toe</div>
       </div>
+
       <div class="main">
         <div class="game" id="gameContainer">
-          <div class="square" id="sq1" data-index="0-0"></div>
-          <div class="square" id="sq2" data-index="0-1"></div>
-          <div class="square" id="sq3" data-index="0-2"></div>
-          <div class="square" id="sq4" data-index="1-0"></div>
-          <div class="square" id="sq5" data-index="1-1"></div>
-          <div class="square" id="sq6" data-index="1-2"></div>
-          <div class="square" id="sq7" data-index="2-0"></div>
-          <div class="square" id="sq8" data-index="2-1"></div>
-          <div class="square" id="sq9" data-index="2-2"></div>
+          <button class="square" id="sq1" data-index="0-0"></button>
+          <button class="square" id="sq2" data-index="0-1"></button>
+          <button class="square" id="sq3" data-index="0-2"></button>
+          <button class="square" id="sq4" data-index="1-0"></button>
+          <button class="square" id="sq5" data-index="1-1"></button>
+          <button class="square" id="sq6" data-index="1-2"></button>
+          <button class="square" id="sq7" data-index="2-0"></button>
+          <button class="square" id="sq8" data-index="2-1"></button>
+          <button class="square" id="sq9" data-index="2-2"></button>
+        </div>
+        <div class="status-container">
+          <div class="status" id="status-text">hellooo</div>
+          <button id="next-btn">Next game</button>
+        </div>
+
+        <div class="info">
+          <div class="scores">
+            <div class="player1" id="player1score">1</div>
+            <div class="player2" id="player2score">2</div>
+          </div>
+          <div class="players">
+            <div class="player" id="player1name">player 1</div>
+            <div class="player" id="player2name">player 2</div>
+          </div>
         </div>
       </div>
+      <div id="gameOverModal" class="gameOverModal">
+        <div id="endMsg">player x wins</div>
+        <button>Play Again</button>
+      </div>
+
       <div class="footer">
         <footer>
           <p>
